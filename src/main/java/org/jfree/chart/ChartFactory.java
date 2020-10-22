@@ -671,21 +671,7 @@ public abstract class ChartFactory {
         ValueAxis valueAxis = new NumberAxis(valueAxisLabel);
 
         BarRenderer renderer = new BarRenderer();
-        if (orientation == PlotOrientation.HORIZONTAL) {
-            ItemLabelPosition position1 = new ItemLabelPosition(
-                    ItemLabelAnchor.OUTSIDE3, TextAnchor.CENTER_LEFT);
-            renderer.setDefaultPositiveItemLabelPosition(position1);
-            ItemLabelPosition position2 = new ItemLabelPosition(
-                    ItemLabelAnchor.OUTSIDE9, TextAnchor.CENTER_RIGHT);
-            renderer.setDefaultNegativeItemLabelPosition(position2);
-        } else if (orientation == PlotOrientation.VERTICAL) {
-            ItemLabelPosition position1 = new ItemLabelPosition(
-                    ItemLabelAnchor.OUTSIDE12, TextAnchor.BOTTOM_CENTER);
-            renderer.setDefaultPositiveItemLabelPosition(position1);
-            ItemLabelPosition position2 = new ItemLabelPosition(
-                    ItemLabelAnchor.OUTSIDE6, TextAnchor.TOP_CENTER);
-            renderer.setDefaultNegativeItemLabelPosition(position2);
-        }
+        getOrientationObject(orientation).createBarChart(renderer);
         if (tooltips) {
             renderer.setDefaultToolTipGenerator(
                     new StandardCategoryToolTipGenerator());
@@ -2087,5 +2073,15 @@ try {
         currentTheme.apply(chart);
         return chart;
     }
+
+	private static Orientation getOrientationObject(PlotOrientation orientation) 
+	{
+		
+		if (orientation == PlotOrientation.VERTICAL)
+			return new Vertical();
+		if (orientation == PlotOrientation.HORIZONTAL)
+			return new Horizontal();
+		return null;
+	}
 
 }
