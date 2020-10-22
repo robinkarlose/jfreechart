@@ -990,41 +990,40 @@ public class MeterPlot extends Plot implements Serializable, Cloneable {
             double minValue, double maxValue, Paint paint, boolean dial) {
 
         Args.nullNotPermitted(paint, "paint");
-        double startAngle = valueToAngle(maxValue);
-        double endAngle = valueToAngle(minValue);
-        double extent = endAngle - startAngle;
-
-        double x = area.getX();
-        double y = area.getY();
-        double w = area.getWidth();
-        double h = area.getHeight();
-        int joinType = Arc2D.OPEN;
-        if (this.shape == DialShape.PIE) {
-            joinType = Arc2D.PIE;
-        }
-        else if (this.shape == DialShape.CHORD) {
-            if (dial && this.meterAngle > 180) {
-                joinType = Arc2D.CHORD;
-            }
-            else {
-                joinType = Arc2D.PIE;
-            }
-        }
-        else if (this.shape == DialShape.CIRCLE) {
-            joinType = Arc2D.PIE;
-            if (dial) {
-                extent = 360;
-            }
-        }
-        else {
-            throw new IllegalStateException("DialShape not recognised.");
-        }
-
-        g2.setPaint(paint);
-        Arc2D.Double arc = new Arc2D.Double(x, y, w, h, startAngle, extent,
-                joinType);
+        Arc2D.Double arc = getArc(area, minValue, maxValue, dial);
+		g2.setPaint(paint);
         g2.fill(arc);
     }
+
+	private Arc2D.Double getArc(Rectangle2D area, double minValue, double maxValue, boolean dial)
+			throws IllegalStateException {
+		double startAngle = valueToAngle(maxValue);
+		double endAngle = valueToAngle(minValue);
+		double extent = endAngle - startAngle;
+		double x = area.getX();
+		double y = area.getY();
+		double w = area.getWidth();
+		double h = area.getHeight();
+		int joinType = Arc2D.OPEN;
+		if (this.shape == DialShape.PIE) {
+			joinType = Arc2D.PIE;
+		} else if (this.shape == DialShape.CHORD) {
+			if (dial && this.meterAngle > 180) {
+				joinType = Arc2D.CHORD;
+			} else {
+				joinType = Arc2D.PIE;
+			}
+		} else if (this.shape == DialShape.CIRCLE) {
+			joinType = Arc2D.PIE;
+			if (dial) {
+				extent = 360;
+			}
+		} else {
+			throw new IllegalStateException("DialShape not recognised.");
+		}
+		Arc2D.Double arc = new Arc2D.Double(x, y, w, h, startAngle, extent, joinType);
+		return arc;
+	}
 
     /**
      * Translates a data value to an angle on the dial.
